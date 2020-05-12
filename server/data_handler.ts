@@ -1,6 +1,6 @@
 import {PubSub} from "apollo-server"
 import fs from "fs"
-import {BacklogData} from "../model";
+import {BacklogData} from "nn-lib/dist/model";
 
 export default class DataHandler {
 
@@ -9,6 +9,7 @@ export default class DataHandler {
     models: {[propName: string]: BacklogData}
 
     constructor(pubSub: PubSub, paths: string[]) {
+        this.models = {}
         this.pubSub = pubSub
         this.watchPaths = paths
         this.loadData()
@@ -53,7 +54,7 @@ export default class DataHandler {
 
     getBatches(modelId: string) {
         return Object.keys(this.models[modelId].epochs).reduce((acc, epoch) => {
-            acc.push(...this.models[modelId].epochs[epoch].batches.map((batch, index) => {
+            acc.push(...this.models[modelId].epochs[epoch].batches.map((batch: any, index: number) => {
                 batch["id"] = index
                 batch["epoch_id"] = parseInt(epoch.substr(epoch.lastIndexOf("_") + 1));
                 batch["global_id"] = batch["epoch_id"] - 1 == 0? index :
@@ -61,7 +62,7 @@ export default class DataHandler {
                 return batch
             }))
             return acc
-        }, [])
+        }, [] as any[])
     }
 
     getBatch(modelId: string, epoch_id: number, batch_id: number) {
@@ -71,7 +72,7 @@ export default class DataHandler {
     private parseEpoch(modelId: string, epoch: string) {
         const epoch_id = parseInt(epoch.substr(epoch.lastIndexOf("_") + 1))
         const data = Object.create(this.models[modelId].epochs[epoch])
-        data.batches = data.batches.map((batch, index) => {
+        data.batches = data.batches.map((batch: any, index: number) => {
             batch["id"] = index
             batch["epoch_id"] = epoch_id;
             batch["global_id"] = epoch_id - 1 == 0? index :
@@ -84,13 +85,13 @@ export default class DataHandler {
         return data
     }
 
-    getEpochs(modelId) {
+    getEpochs(modelId: string) {
         return Object.keys(this.models[modelId].epochs).map((epoch) => {
             return this.parseEpoch(modelId, epoch)
         })
     }
 
-    getEpoch(modelId, epoch_id: number) {
+    getEpoch(modelId: string, epoch_id: number) {
         return this.parseEpoch(modelId,"epoch_" + epoch_id)
     }
 

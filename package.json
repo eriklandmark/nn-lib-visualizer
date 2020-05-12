@@ -1,15 +1,26 @@
 {
   "name": "nn-lib-visualizer",
   "version": "0.1.0",
+  "author": "Erik Landmark",
+  "license": "ISC",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build"
+    "build": "vue-cli-service build",
+    "postbuild": "tsc -p tsconfig-server.json"
   },
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "@types/chart.js": "^2.9.19",
+    "@types/node": "^13.11.1",
+    "apollo-cache-control": "^0.10.0",
+    "apollo-server": "^2.11.0",
     "axios": "^0.19.2",
     "chart.js": "^2.9.3",
+    "express": "^4.17.1",
+    "graphql": "^15.0.0",
     "material-design-icons-iconfont": "^5.0.1",
     "nn-lib": "github:eriklandmark/nn-lib",
     "register-service-worker": "^1.7.1",
