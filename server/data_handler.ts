@@ -7,6 +7,7 @@ export default class DataHandler {
     pubSub: PubSub
     watchPaths: string[]
     models: {[propName: string]: BacklogData}
+    update_interval: number = 5000
 
     constructor(pubSub: PubSub, paths: string[]) {
         this.models = {}
@@ -15,11 +16,16 @@ export default class DataHandler {
         this.loadData()
     }
 
-    loadData() {
-        this.models = this.watchPaths.reduce((acc: {[propName: string]: BacklogData}, path: string, index: number) => {
-            acc[index.toString()] = JSON.parse(fs.readFileSync(path, {encoding: "utf-8"}))
-            return acc
-        }, {})
+    loadData(path: null | string = null) {
+        if (path) {
+            const model_id = this.watchPaths.indexOf(path).toString()
+            this.models[model_id] = JSON.parse(fs.readFileSync(path, {encoding: "utf-8"}))
+        } else {
+            this.models = this.watchPaths.reduce((acc: {[propName: string]: BacklogData}, path: string, index: number) => {
+                acc[index.toString()] = JSON.parse(fs.readFileSync(path, {encoding: "utf-8"}))
+                return acc
+            }, {})
+        }
     }
 
     startWatcher() {
@@ -27,9 +33,9 @@ export default class DataHandler {
             if(!fs.existsSync(path)) {
                 throw "Backlog file doesn't exists... Aborting!"
             }
-            fs.watchFile(path, {}, (stats) => {
-                console.log("Backlog updated.")
-                this.loadData()
+            fs.watchFile(path, {interval: this.update_interval}, () => {
+                console.log(`Model ${this.watchPaths.indexOf(path).toString()} updated.`)
+                this.loadData(path)
                 const model_id = this.watchPaths.indexOf(path).toString()
                 const latest_epoch = Object.keys(this.models[model_id].epochs)[Object.keys(this.models[model_id].epochs).length - 1]
                 const data = this.getEpoch(model_id, parseInt(latest_epoch.substr(latest_epoch.lastIndexOf("_") + 1)))

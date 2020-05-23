@@ -9,6 +9,7 @@ import Path from "path"
 
 export default class Visualizer {
     PORT = 3000
+    UPDATE_INTERVAL = 5000
 
     pubsub = new PubSub();
     data_handler: DataHandler
@@ -17,6 +18,7 @@ export default class Visualizer {
 
     constructor(path: string[]) {
         this.data_handler = new DataHandler(this.pubsub, path)
+        this.data_handler.update_interval = this.UPDATE_INTERVAL
         const typeDefs = gql(`
               type LayerInfo {
                 type: String

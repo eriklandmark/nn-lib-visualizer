@@ -31,6 +31,8 @@
                     v-tabs-items(v-model="tab")
                         v-tab-item
                             v-data-table(:headers="headers" :items="table_data" hide-default-footer item-key="name" show-expand)
+                                //template(v-slot:item.graph="{ item }")
+                                    v-simple-checkbox(v-model="item.graph")
                                 template(v-slot:expanded-item="{ headers, item }" )
                                     td(:colspan="headers.length")
                                         div(style="margin: 16px 0")
@@ -59,7 +61,7 @@
 </template>
 
 <script lang="ts">
-    import {Vue, Component} from 'vue-property-decorator'
+    import {Vue, Component, Watch} from 'vue-property-decorator'
     import NewLineGraph from "@/components/NewLineGraph.vue"
 
     @Component({components: {NewLineGraph}})
@@ -77,7 +79,7 @@
             {text: 'Duration', value: 'duration'},
             {text: 'Time Left', value: 'time_left'},
             {text: 'Total Time', value: 'total_time'},
-            //{ text: 'Progress', value: 'progress' },
+            //{text: "Graph", value: "graph"}
         ]
 
         get table_data() {
@@ -89,7 +91,8 @@
                     start_time: `${new Date(this.$store.state.models[model].info.start_time).toDateString()} ${this.formatTime(new Date(this.$store.state.models[model].info.start_time))}`,
                     duration: `${this.formatDuration(this.$store.state.models[model].info.duration)}`,
                     time_left: `${this.formatDuration(this.$store.state.models[model].info.time_left)}`,
-                    total_time: `${this.formatDuration(this.$store.state.models[model].info.avg_time * this.$store.state.models[model].info.batches_per_epoch * this.$store.state.models[model].info.total_epochs)}`
+                    total_time: `${this.formatDuration(this.$store.state.models[model].info.avg_time * this.$store.state.models[model].info.batches_per_epoch * this.$store.state.models[model].info.total_epochs)}`,
+                    graph: true
                 }
             })
         }
@@ -136,34 +139,38 @@
             return Object.keys(this.$store.state.models).length > 0
         }
 
+        get filter() {
+            return this.table_data.filter((model) => model.graph).map((model) => model.name)
+        }
+
         get epoch_acc_data() {
-            return Object.keys(this.$store.state.models).map((model: string) =>
-                this.$store.state.models[model].graphs.epoch_acc)
+            return this.table_data.filter((model) => model.graph)
+                .map((model: any) => this.$store.state.models[model.name].graphs.epoch_acc)
         }
 
         get epoch_loss_data() {
-            return Object.keys(this.$store.state.models).map((model: string) =>
-                this.$store.state.models[model].graphs.epoch_loss)
+            return this.table_data.filter((model) => model.graph).map((model) => model.name)
+                .map((model: string) => this.$store.state.models[model].graphs.epoch_loss)
         }
 
         get eval_acc_data() {
-            return Object.keys(this.$store.state.models).map((model: string) =>
-                this.$store.state.models[model].graphs.eval_acc)
+            return this.table_data.filter((model) => model.graph).map((model) => model.name)
+                .map((model: string) => this.$store.state.models[model].graphs.eval_acc)
         }
 
         get eval_loss_data() {
-            return Object.keys(this.$store.state.models).map((model: string) =>
-                this.$store.state.models[model].graphs.eval_loss)
+            return this.table_data.filter((model) => model.graph).map((model) => model.name)
+                .map((model: string) => this.$store.state.models[model].graphs.eval_loss)
         }
 
         get batch_acc_data() {
-            return Object.keys(this.$store.state.models).map((model: string) =>
-                this.$store.state.models[model].graphs.batch_acc)
+            return this.table_data.filter((model) => model.graph).map((model) => model.name)
+                .map((model: string) => this.$store.state.models[model].graphs.batch_acc)
         }
 
         get batch_loss_data() {
-            return Object.keys(this.$store.state.models).map((model: string) =>
-                this.$store.state.models[model].graphs.batch_loss)
+            return this.table_data.filter((model) => model.graph).map((model) => model.name)
+                .map((model: string) => this.$store.state.models[model].graphs.batch_loss)
         }
     }
 </script>

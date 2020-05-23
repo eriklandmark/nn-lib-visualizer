@@ -90,15 +90,19 @@ export default new Vuex.Store({
 
             Vue.set(store.state.models[modelId].graphs, "eval_acc", Object.keys(store.state.models[modelId].epochs)
                     .slice(0, Object.keys(store.state.models[modelId].epochs).length - 1).reduce((acc, epoch) => {
-                        acc.y.push(store.state.models[modelId].epochs[epoch].eval_accuracy)
-                        acc.x.push(store.state.models[modelId].epochs[epoch].id)
+                        if (store.state.models[modelId].epochs[epoch].eval_accuracy != 0) {
+                            acc.y.push(store.state.models[modelId].epochs[epoch].eval_accuracy)
+                            acc.x.push(store.state.models[modelId].epochs[epoch].id)
+                        }
                         return acc
                     }, {x: [0], y:[0], name: "model_" + modelId}))
 
             Vue.set(store.state.models[modelId].graphs, "eval_loss", Object.keys(store.state.models[modelId].epochs)
                 .slice(0, Object.keys(store.state.models[modelId].epochs).length - 1).reduce((acc, epoch) => {
-                    acc.y.push(store.state.models[modelId].epochs[epoch].eval_loss)
-                    acc.x.push(store.state.models[modelId].epochs[epoch].id)
+                    if (store.state.models[modelId].epochs[epoch].eval_loss != 0) {
+                        acc.y.push(store.state.models[modelId].epochs[epoch].eval_loss)
+                        acc.x.push(store.state.models[modelId].epochs[epoch].id)
+                    }
                     return acc
                 }, {x: [] as number[], y:[] as number[], name: "model_" + modelId}))
 

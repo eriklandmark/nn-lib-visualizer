@@ -1,7 +1,7 @@
 <template lang="pug">
     v-card(style="margin: 16px")
         .center(style="margin:8px")
-            Plotly(:data="plot_data" :layout="layout" :display-mode-bar="size === 2")
+            Plotly(:data="plot_data" :layout="layout" :display-mode-bar="size === 2" :watchShallow="true")
 
 </template>
 
