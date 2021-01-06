@@ -29,7 +29,7 @@
     "@vue/cli-plugin-typescript": "~4.3.0",
     "@vue/cli-plugin-vuex": "~4.3.0",
     "@vue/cli-service": "~4.3.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "chart.js": "^2.9.3",
     "graphql-tag": "^2.9.0",
     "material-design-icons-iconfont": "^5.0.1",
